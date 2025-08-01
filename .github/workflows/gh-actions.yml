@@ -1,22 +1,19 @@
+name: Parallel Jobs Demo
+
 on: [push]
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+      - name: Print working directory
+        run: pwd
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
+      - name: List files
+        run: ls -la
 
       - name: Echo from Job 1
         run: echo "Hello from Job 1!"
@@ -24,19 +21,14 @@ jobs:
   job2:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+      - name: Show current date
+        run: date
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run Python script
-        run: python script.py
+      - name: Show system info
+        run: uname -a
 
       - name: Echo from Job 2
         run: echo "Hello from Job 2!"
@@ -44,19 +36,14 @@ jobs:
   job3:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
+      - name: Display environment variables
+        run: env
 
-      - name: Compile Java code
-        run: javac Main.java
-
-      - name: Run Java program
-        run: java Main
+      - name: Show disk usage
+        run: df -h
 
       - name: Echo from Job 3
         run: echo "Hello from Job 3!"
