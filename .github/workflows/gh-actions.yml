@@ -1,60 +1,63 @@
-name: Parallel Jobs Demo
+name: Demo Multi-Job Workflow
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  job1:
+  setup:
+    name: Setup Environment
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Print working directory
-        run: pwd
+      - name: Setup Node (Demo Purpose)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-      - name: List files
-        run: ls -la
+      - name: Echo setup complete
+        run: echo "✅ Environment setup complete"
 
-      - name: Echo from Job 1
-        run: echo "Hello from Job 1!"
-
-  job2:
-    needs: job1
+  lint:
+    name: Lint Code (Runs in Parallel)
     runs-on: ubuntu-latest
+    needs: setup
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Run Linter
+        run: echo "🔍 Linting code..."
 
-      - name: Show current date
-        run: date
-
-      - name: Show system info
-        run: uname -a
-
-      - name: Echo from Job 2
-        run: echo "Hello from Job 2!"
-
-  job3:
-    needs: job1
+  test:
+    name: Run Tests (Runs in Parallel)
     runs-on: ubuntu-latest
+    needs: setup
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Run Unit Tests
+        run: echo "🧪 Running tests..."
 
-      - name: Display environment variables
-        run: env
-  job4:
-    needs: job3
+  build:
+    name: Build Project (Runs After Lint & Test)
     runs-on: ubuntu-latest
+    needs: [lint, test]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Build Project
+        run: echo "🏗️ Building project..."
 
-      - name: Display environment variables
-        run: env      
+  deploy-staging:
+    name: Deploy to Staging (Sequential after Build)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to Staging
+        run: echo "🚀 Deploying to staging environment..."
 
-      - name: Show disk usage
-        run: df -h
+  notify:
+    name: Notify Team (Final Job)
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    steps:
+      - name: Send Slack Notification
+        run: echo "📣 Notifying team about staging deployment..."
 
-      - name: Echo from Job 3
-        run: echo "Hello from Job 3!"
