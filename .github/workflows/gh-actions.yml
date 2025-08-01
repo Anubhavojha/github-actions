@@ -35,6 +35,7 @@ jobs:
         run: echo "Hello from Job 2!"
 
   job3:
+    needs: job1
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,6 +43,15 @@ jobs:
 
       - name: Display environment variables
         run: env
+  job4:
+    needs: job3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Display environment variables
+        run: env      
 
       - name: Show disk usage
         run: df -h
